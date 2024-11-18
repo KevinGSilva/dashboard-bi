@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MusicController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,5 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [MusicController::class, 'showUploadForm'])->name('upload.json.form');
+Route::get('/', function () {
+    return view('home');
+});
+Route::get('/upload-json', [MusicController::class, 'showUploadForm'])->name('upload.json.form');
 Route::post('/upload-json', [MusicController::class, 'processUpload'])->name('upload.json.process');
