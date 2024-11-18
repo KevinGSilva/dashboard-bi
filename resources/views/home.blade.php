@@ -205,13 +205,13 @@
                         <div class="row">
                             <div class="col-lg-3 graph-canvas">
                                 <div class="col-lg-12">
-                                    <h4>Estatísticas de Músicas</h4>
+                                    <h4>Distribuição por tonalidades</h4>
                                 </div>
                                 <canvas id="modesChart"></canvas>
                             </div>
                             <div class="col-lg-6 graph-canvas">
                                 <div class="col-lg-12">
-                                    <h4>Estatísticas de Músicas</h4>
+                                    <h4>Distribuição por "notas"</h4>
                                 </div>
                                 <canvas id="keysChart"></canvas>
                             </div>
