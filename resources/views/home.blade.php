@@ -7,12 +7,34 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-12 mb-2">
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-12">
+                <div class="row col-sm-12 col-lg-8">
+                    <div class="col-lg-12 d-flex justify-content-between">
                         <h4>Artistas/bandas são as mais populares</h4>
+                        <div class="filter col-lg-4 d-flex justify-content-between">
+                            <div class="col-lg-5">
+                                <label for="entity">Visualização</label>
+                                <select class="form-select select-popularity" id="filter-popularity-entity" name="entity">
+                                    @foreach (getEntity() as $key => $item)
+                                        <option value="{{ $key }}" {{ $key == 1 ? 'selected' : '' }}>{{ getEntityTranslated($key) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-5">
+                                <label for="limit">Quantidade</label>
+                                <select class="form-select select-popularity" id="filter-popularity-limit" name="limit">
+                                    <option value="">Todos</option>
+                                    <option value="10" selected>Top 10</option>
+                                    <option value="50">Top 50</option>
+                                    <option value="100">Top 100</option>
+                                    <option value="200">Top 200</option>
+                                    <option value="400">Top 400</option>
+                                    <option value="800">Top 800</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-12 graph-canvas">
                         <canvas class="ms-1 me-1" id="chart-artists-popularity"></canvas>
@@ -45,45 +67,20 @@ var chartArtistsPopularity = null;
 var chartArtistsPopularity2 = null;
 
 jQuery(document).ready(function ($) {
-    getAppointmentData();
+    getArtistPopularityData();
 
-    const data = {
-        labels: ['Metallica', 'Iron Maiden', 'Led Zeppelin', 'Black Sabbath', 'AC/DC'],
-        datasets: [
-            {
-                label: 'Popularidade (%)',
-                data: [95, 90, 85, 80, 75],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(75, 192, 192, 0.8)',
-                    'rgba(153, 102, 255, 0.8)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    function getAppointmentData() {
+    function getArtistPopularityData() {
 		$('.spinner-background').removeClass('d-none');
-		var formData = ''
+		var formData = getPopularityFormData();
         
 		$.ajax({
-			url: '{{ url("api/dashboard") }}',          	
+			url: '{{ url("api/artists-popularity") }}',          	
           	type: "POST",
           	data: formData,
 			processData: false,
 			contentType: false,
           	success: function(response) {
-                console.log(response[0].track);
+                createChartArtistsPopularity(response);
 
 				$('.spinner-background').addClass('d-none');
 		  	},
@@ -96,16 +93,28 @@ jQuery(document).ready(function ($) {
         });
 	}
 
-    createChartArtistsPopularity(data);
-
     function createChartArtistsPopularity(data) {
+
+        let chart = document.getElementById("chart-artists-popularity");
+
+        adjustChartHeight(chart);
+
         if (chartArtistsPopularity) {
-            chartArtistsPopularity.destroy();
+            chartArtistsPopularity.destroy(); // Remove o gráfico anterior, se existir
         }
 
-        chartArtistsPopularity = new Chart(document.getElementById("chart-artists-popularity"), {
+        chartArtistsPopularity = new Chart(chart, {
             type: 'bar',
-            data: data,
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'Popularidade',
+                        data: data.datasets,
+                        borderWidth: 1,
+                    },
+                ],
+            },
             options: {
                 responsive: true,
                 plugins: {
@@ -122,7 +131,7 @@ jQuery(document).ready(function ($) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Popularidade (%)',
+                            text: 'Popularidade',
                         },
                     },
                     x: {
@@ -135,42 +144,32 @@ jQuery(document).ready(function ($) {
             },
         });
     }
-   
-   /* if (chartArtistsPopularity2) {
-       chartArtistsPopularity2.destroy();
-   }
 
-   chartArtistsPopularity2 = new Chart(document.getElementById("chart-artists-popularity-2"), {
-       type: 'bar',
-       data: data,
-       options: {
-           responsive: true,
-           plugins: {
-               legend: {
-                   display: true,
-                   position: 'top',
-               },
-               tooltip: {
-                   enabled: true,
-               },
-           },
-           scales: {
-               y: {
-                   beginAtZero: true,
-                   title: {
-                       display: true,
-                       text: 'Popularidade (%)',
-                   },
-               },
-               x: {
-                   title: {
-                       display: true,
-                       text: 'Artistas/Bandas',
-                   },
-               },
-           },
-       },
-   }); */
+    function getPopularityFormData () {        
+		const formData = new FormData()
+
+		formData.append('entity', $('#filter-popularity-entity').val())
+		formData.append('limit', $('#filter-popularity-limit').val())
+		
+		return formData
+	}
+
+    $('#filter-popularity-entity, #filter-popularity-limit').on('change', function() {
+        getArtistPopularityData();
+    }).trigger('change');
+
+    function adjustChartHeight(chart) {
+        const canvas = chart;
+        const windowWidth = $(window).width();
+        let chartHeight = 150;
+
+        if (windowWidth <= 768) {
+            chartHeight = 500;
+        }
+       
+        canvas.height = chartHeight;
+    }
+   
 });
 </script>
 @endsection
