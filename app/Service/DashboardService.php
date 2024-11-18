@@ -116,4 +116,54 @@ class DashboardService
             'albumStats' => $metalClassicalMusicByAlbum,
         ]);
     }
+
+    public function getMusicTones()
+    {
+        $rawTimeSignatures = Music::selectRaw('time_signature, COUNT(*) as count')
+                                ->groupBy('time_signature')
+                                ->pluck('count', 'time_signature');
+        
+        $timeSignatures = $rawTimeSignatures->mapWithKeys(function ($count, $key) {
+            return [getTimeSignature($key) => $count];
+        });
+        
+        $modes = Music::selectRaw('mode, COUNT(*) as count')
+                    ->groupBy('mode')
+                    ->pluck('count', 'mode');
+            
+        $rawKeys = Music::selectRaw('`key`, COUNT(*) as count')
+                    ->groupBy('key')
+                    ->pluck('count', 'key');
+                    
+        $keys = $rawKeys->mapWithKeys(function ($count, $key) {
+            return [getNotes($key) => $count];
+        });
+        
+        $popularThreshold = 50;
+        $rawPopularTimeSignatures = Music::selectRaw('time_signature, COUNT(*) as count')
+            ->where('popularity', '>=', $popularThreshold)
+            ->groupBy('time_signature')
+            ->pluck('count', 'time_signature');
+        
+        $popularTimeSignatures = $rawPopularTimeSignatures->mapWithKeys(function ($count, $key) {
+            return [getTimeSignature($key) => $count];
+        });
+
+        $rawLessPopularTimeSignatures = Music::selectRaw('time_signature, COUNT(*) as count')
+            ->where('popularity', '<', $popularThreshold)
+            ->groupBy('time_signature')
+            ->pluck('count', 'time_signature');
+        
+        $lessPopularTimeSignatures = $rawLessPopularTimeSignatures->mapWithKeys(function ($count, $key) {
+            return [getTimeSignature($key) => $count];
+        });
+
+        return response()->json([
+            'timeSignatures' => $timeSignatures,
+            'modes' => $modes,
+            'keys' => $keys,
+            'popularTimeSignatures' => $popularTimeSignatures,
+            'lessPopularTimeSignatures' => $lessPopularTimeSignatures,
+        ]);
+    }
 }

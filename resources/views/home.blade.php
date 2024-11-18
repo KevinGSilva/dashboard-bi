@@ -166,6 +166,62 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-12 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12 mb-2">
+                        <div class="col-lg-12 d-flex justify-content-between">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 graph-canvas">
+                                <div class="col-lg-12">
+                                    <h4>Distribuição de assinaturas de tempo</h4>
+                                </div>
+                                <canvas id="timeSignaturesChart"></canvas>
+                            </div>
+                            <div class="col-lg-6 graph-canvas">
+                                <div class="col-lg-12">
+                                    <h4>Distribuição de assinaturas de tempo por popularidade</h4>
+                                </div>
+                                <canvas id="popularityComparisonChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12 mb-2">
+                        <div class="col-lg-12 d-flex justify-content-between">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 graph-canvas">
+                                <div class="col-lg-12">
+                                    <h4>Estatísticas de Músicas</h4>
+                                </div>
+                                <canvas id="modesChart"></canvas>
+                            </div>
+                            <div class="col-lg-6 graph-canvas">
+                                <div class="col-lg-12">
+                                    <h4>Estatísticas de Músicas</h4>
+                                </div>
+                                <canvas id="keysChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -177,6 +233,10 @@ var chartDecadePopularity = null;
 var chartCorrelationPopularity = null;
 var chartDanceabilityEnergy = null;
 var chartAlbumEnergy = null;
+var chartMusicTones = null;
+var chartMusicTones2 = null;
+var chartMusicTones3 = null;
+var chartMusicTones4 = null;
 
 jQuery(document).ready(function ($) {
     getArtistPopularityData();
@@ -184,6 +244,7 @@ jQuery(document).ready(function ($) {
     getDecadePopularityData();
     getCorrelationPopularityData();
     getDanceabilityEnergyData();
+    getMusicTonesData();
 
     function getArtistPopularityData() {
 		$('.spinner-background').removeClass('d-none');
@@ -679,6 +740,151 @@ jQuery(document).ready(function ($) {
 		
 		return formData
 	}
+
+    function getMusicTonesData() {
+        $('.spinner-background').removeClass('d-none');
+        
+        $.ajax({
+            url: '{{ url("api/music-tones") }}',          	
+            type: "GET",
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                createChartMusicTones(response);
+                createChartMusicTones2(response);
+                createChartMusicTones3(response);
+                createChartMusicTones4(response);
+
+                $('.spinner-background').addClass('d-none');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+
+                $('.spinner-background').addClass('d-none');
+            }
+        });
+    }
+
+    function createChartMusicTones(data) {
+
+        let chart = document.getElementById('timeSignaturesChart');
+
+        adjustChartHeight(chart);
+
+        if (chartMusicTones) {
+            chartMusicTones.destroy();
+        }
+
+        chartMusicTones = new Chart(chart, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(data.timeSignatures),
+                datasets: [{
+                    label: 'Distribuição de Assinaturas de Tempo',
+                    data: Object.values(data.timeSignatures),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    function createChartMusicTones2(data) {
+        let chart = document.getElementById('modesChart');
+
+        adjustChartHeight(chart);
+
+        if (chartMusicTones2) {
+            chartMusicTones2.destroy();
+        }
+
+        chartMusicTones2 = new Chart(chart, {
+            type: 'pie',
+            data: {
+                labels: ['Menor', 'Maior'],
+                datasets: [{
+                    label: 'Modos',
+                    data: [data.modes[0] || 0, data.modes[1] || 0],
+                    backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)'],
+                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    function createChartMusicTones3(data) {
+
+        let chart = document.getElementById('keysChart');
+
+        adjustChartHeight(chart);
+
+        if (chartMusicTones3) {
+            chartMusicTones3.destroy();
+        }
+
+        chartMusicTones3 = new Chart(chart, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(data.keys),
+                datasets: [{
+                    label: 'Tonalidades',
+                    data: Object.values(data.keys),
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    function createChartMusicTones4(data) {
+
+        const chart = document.getElementById('popularityComparisonChart');
+
+        adjustChartHeight(chart);
+
+        if (chartMusicTones4) {
+            chartMusicTones4.destroy();
+        }
+
+        chartMusicTones4 = new Chart(chart, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(data.popularTimeSignatures),
+                datasets: [
+                    {
+                        label: 'Populares',
+                        data: Object.values(data.popularTimeSignatures),
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Menos Populares',
+                        data: Object.values(data.lessPopularTimeSignatures),
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 
     $('#filter-popularity-entity, #filter-popularity-limit').on('change', function() {
         getArtistPopularityData();

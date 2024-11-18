@@ -57,4 +57,11 @@ class DashboardController extends Controller
         return $musicStats;
     }
 
+    public function getMusicTones()
+    {
+        $musicData = $this->dashboardService->getMusicTones();
+
+        return $musicData;
+    }
+
 }

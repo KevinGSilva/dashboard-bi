@@ -24,3 +24,4 @@ Route::get('/year-popularity', [DashboardController::class, 'getPopularityByYear
 Route::get('/decade-popularity', [DashboardController::class, 'getPopularityByDecade']);
 Route::get('/correlation', [DashboardController::class, 'getCorrelationData']);
 Route::post('/music-stats', [DashboardController::class, 'getMusicStats']);
+Route::get('/music-tones', [DashboardController::class, 'getMusicTones']);
