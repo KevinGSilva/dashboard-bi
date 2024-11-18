@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Models\Music;
 use Illuminate\Support\Facades\DB;
+use Phpml\Regression\LeastSquares;
 
 class DashboardService
 {
@@ -51,4 +52,44 @@ class DashboardService
         return response()->json($popularityByDecade);
     }
 
+    function getCorrelationData()
+    {
+        $musics = Music::select([
+            'popularity',
+            'energy',
+            'danceability',
+            'valence',
+            'acousticness',
+            'tempo',
+        ])->get();
+
+        // Preparando os dados para a análise de regressão
+        $samples = [];
+        $targets = [];
+
+        foreach ($musics as $music) {
+            $samples[] = [
+                $music->energy,
+                $music->danceability,
+                $music->valence,
+                $music->acousticness,
+                $music->tempo
+            ];
+            $targets[] = $music->popularity;
+        }
+
+        // Aplicando a regressão linear
+        $regression = new LeastSquares();
+        $regression->train($samples, $targets);
+
+        // Obter os coeficientes da regressão (o impacto de cada atributo na popularidade)
+        $coefficients = $regression->getCoefficients();
+        $intercept = $regression->getIntercept();
+        
+        return response()->json([
+            'coefficients' => $coefficients,
+            'intercept' => $intercept,
+            'musics' => $musics
+        ]);
+    }
 }

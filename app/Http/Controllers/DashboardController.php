@@ -43,4 +43,11 @@ class DashboardController extends Controller
         return $popularity;
     }
 
+    public function getCorrelationData()
+    {
+        $correlationData = $this->dashboardService->getCorrelationData();
+
+        return $correlationData;
+    }
+
 }

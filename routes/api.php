@@ -22,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/artists-popularity', [DashboardController::class, 'artistsByPopularity']);
 Route::get('/year-popularity', [DashboardController::class, 'getPopularityByYear']);
 Route::get('/decade-popularity', [DashboardController::class, 'getPopularityByDecade']);
+Route::get('/correlation', [DashboardController::class, 'getCorrelationData']);

@@ -78,6 +78,40 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-9 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="row col-sm-12 col-lg-9">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div class="col-lg-12">
+                            <h4>Correlação entre Popularidade e Características Musicais</h4>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 graph-canvas">
+                        <canvas class="ms-1 me-1" id="popularityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="row col-sm-12 col-lg-12">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div class="col-lg-12">
+                            <h4>Coeficientes da Regressão Linear</h4>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 graph-canvas">
+                        <ul id="regressionCoefficients"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -86,11 +120,13 @@
 var chartArtistsPopularity = null;
 var chartYearPopularity = null;
 var chartDecadePopularity = null;
+var chartCorrelationPopularity = null;
 
 jQuery(document).ready(function ($) {
     getArtistPopularityData();
     getYearPopularityData();
     getDecadePopularityData();
+    getCorrelationPopularityData();
 
     function getArtistPopularityData() {
 		$('.spinner-background').removeClass('d-none');
@@ -322,6 +358,127 @@ jQuery(document).ready(function ($) {
                     },
                 },
             },
+        });
+    }
+
+    function getCorrelationPopularityData() {
+        $('.spinner-background').removeClass('d-none');
+        var formData = ''
+        
+        $.ajax({
+            url: '{{ url("api/correlation") }}',          	
+            type: "GET",
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                createChartCorrelationPopularity(response);
+
+                $('.spinner-background').addClass('d-none');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+
+                $('.spinner-background').addClass('d-none');
+            }
+        });
+    }
+
+    function createChartCorrelationPopularity(data) {
+        let chart = document.getElementById("popularityChart");
+
+        adjustChartHeight(chart);
+
+        if (chartCorrelationPopularity) {
+            chartCorrelationPopularity.destroy();
+        }
+
+        const energy = [];
+        const danceability = [];
+        const valence = [];
+        const acousticness = [];
+        const tempo = [];
+        const popularity = [];
+
+        // Organizando os dados para o gráfico
+        data.musics.forEach(function(music) {
+            energy.push(music.energy);
+            danceability.push(music.danceability);
+            valence.push(music.valence);
+            acousticness.push(music.acousticness);
+            tempo.push(music.tempo);
+            popularity.push(music.popularity);
+        });
+
+        // Exibindo os coeficientes da regressão
+        const coefficients = data.coefficients;
+        const regressionList = $('#regressionCoefficients');
+        regressionList.empty();
+        regressionList.append('<li>Intercepto: ' + data.intercept + '</li>');
+        regressionList.append('<li>Energy: ' + coefficients[0] + '</li>');
+        regressionList.append('<li>Danceability: ' + coefficients[1] + '</li>');
+        regressionList.append('<li>Valence: ' + coefficients[2] + '</li>');
+        regressionList.append('<li>Acousticness: ' + coefficients[3] + '</li>');
+        regressionList.append('<li>Tempo: ' + coefficients[4] + '</li>');
+
+        chartCorrelationPopularity = new Chart(chart, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Energia',
+                        data: energy.map((e, i) => ({x: e, y: popularity[i]})),
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Dançabilidade',
+                        data: danceability.map((e, i) => ({x: e, y: popularity[i]})),
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Positividade',
+                        data: valence.map((e, i) => ({x: e, y: popularity[i]})),
+                        backgroundColor: 'rgba(255, 98, 0, 0.3)',
+                        borderColor: 'rgba(255, 98, 0, 0.5)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Acústico',
+                        data: acousticness.map((e, i) => ({x: e, y: popularity[i]})),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Duração',
+                        data: tempo.map((e, i) => ({x: e, y: popularity[i]})),
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Atributo Musical'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Popularidade'
+                        }
+                    }
+                }
+            }
         });
     }
 
