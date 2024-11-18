@@ -415,11 +415,11 @@ jQuery(document).ready(function ($) {
         const regressionList = $('#regressionCoefficients');
         regressionList.empty();
         regressionList.append('<li>Intercepto: ' + data.intercept + '</li>');
-        regressionList.append('<li>Energy: ' + coefficients[0] + '</li>');
-        regressionList.append('<li>Danceability: ' + coefficients[1] + '</li>');
-        regressionList.append('<li>Valence: ' + coefficients[2] + '</li>');
-        regressionList.append('<li>Acousticness: ' + coefficients[3] + '</li>');
-        regressionList.append('<li>Tempo: ' + coefficients[4] + '</li>');
+        regressionList.append('<li>Energia: ' + coefficients[0] + '</li>');
+        regressionList.append('<li>Dançabilidade: ' + coefficients[1] + '</li>');
+        regressionList.append('<li>Positividade: ' + coefficients[2] + '</li>');
+        regressionList.append('<li>Acústico: ' + coefficients[3] + '</li>');
+        regressionList.append('<li>Duração: ' + coefficients[4] + '</li>');
 
         chartCorrelationPopularity = new Chart(chart, {
             type: 'scatter',
@@ -454,7 +454,7 @@ jQuery(document).ready(function ($) {
                         borderWidth: 1
                     },
                     {
-                        label: 'Duração',
+                        label: 'Duração (ms)',
                         data: tempo.map((e, i) => ({x: e, y: popularity[i]})),
                         backgroundColor: 'rgba(153, 102, 255, 0.2)',
                         borderColor: 'rgba(153, 102, 255, 1)',
