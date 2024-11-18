@@ -10,34 +10,53 @@
     <div class="col-lg-12 mb-2">
         <div class="card">
             <div class="card-body">
-                <div class="row col-sm-12 col-lg-8">
-                    <div class="col-lg-12 d-flex justify-content-between">
-                        <h4>Entidades mais populares</h4>
-                        <div class="filter col-lg-4 d-flex justify-content-between">
-                            <div class="col-lg-5">
-                                <label for="entity">Entidade</label>
-                                <select class="form-select select-popularity" id="filter-popularity-entity" name="entity">
-                                    @foreach (getEntity() as $key => $item)
-                                        <option value="{{ $key }}" {{ $key == 1 ? 'selected' : '' }}>{{ getEntityTranslated($key) }}</option>
-                                    @endforeach
-                                </select>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-12 d-flex justify-content-between">
+                                <h4>Entidades mais populares</h4>
+                                <div class="filter col-lg-5 d-flex justify-content-between">
+                                    <div class="col-lg-5">
+                                        <label for="entity">Entidade</label>
+                                        <select class="form-select select-popularity" id="filter-popularity-entity" name="entity">
+                                            @foreach (getEntity() as $key => $item)
+                                                <option value="{{ $key }}" {{ $key == 1 ? 'selected' : '' }}>{{ getEntityTranslated($key) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <label for="limit">Quantidade</label>
+                                        <select class="form-select select-popularity" id="filter-popularity-limit" name="limit">
+                                            <option value="">Todos</option>
+                                            <option value="10" selected>Top 10</option>
+                                            <option value="50">Top 50</option>
+                                            <option value="100">Top 100</option>
+                                            <option value="200">Top 200</option>
+                                            <option value="400">Top 400</option>
+                                            <option value="800">Top 800</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-lg-5">
-                                <label for="limit">Quantidade</label>
-                                <select class="form-select select-popularity" id="filter-popularity-limit" name="limit">
-                                    <option value="">Todos</option>
-                                    <option value="10" selected>Top 10</option>
-                                    <option value="50">Top 50</option>
-                                    <option value="100">Top 100</option>
-                                    <option value="200">Top 200</option>
-                                    <option value="400">Top 400</option>
-                                    <option value="800">Top 800</option>
-                                </select>
+                            <div class="col-lg-12 graph-canvas">
+                                <canvas class="ms-1 me-1" id="chart-artists-popularity"></canvas>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-12 graph-canvas">
-                        <canvas class="ms-1 me-1" id="chart-artists-popularity"></canvas>
+                    <div class="col-lg-4 d-flex align-items-center">
+                        <div>
+                            <h5>Descrição do Gráfico</h5>
+                            <p>
+                                Este gráfico apresenta as entidades mais populares com base em critérios específicos. 
+                                Você pode filtrar as entidades desejadas usando os seletores acima e ajustar a quantidade 
+                                de resultados exibidos. Use essas opções para explorar os dados e entender melhor 
+                                as tendências de popularidade.
+                            </p>
+                            <p>
+                                Alterne entre diferentes quantidades para analisar mais profundamente os resultados e obter 
+                                insights sobre as entidades mais relevantes dentro do escopo selecionado.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -48,14 +67,29 @@
     <div class="col-lg-6 mb-2">
         <div class="card">
             <div class="card-body">
-                <div class="row col-sm-12 col-lg-8">
-                    <div class="col-lg-12 d-flex justify-content-between">
-                        <div class="col-lg-12">
-                            <h4>Popularidade média por ano</h4>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h4>Popularidade média por ano</h4>
+                            </div>
+                            <div class="col-lg-12 graph-canvas">
+                                <canvas class="ms-1 me-1" id="chart-year-popularity"></canvas>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-12 graph-canvas">
-                        <canvas class="ms-1 me-1" id="chart-year-popularity"></canvas>
+                    <div class="col-lg-4 d-flex align-items-center">
+                        <div>
+                            <h5>Descrição do Gráfico</h5>
+                            <p>
+                                Este gráfico exibe a popularidade média ao longo dos anos, permitindo a análise 
+                                de tendências históricas e o desempenho de entidades em diferentes períodos.
+                            </p>
+                            <p>
+                                Através deste gráfico, é possível identificar padrões sazonais, anos de maior destaque 
+                                e entender a evolução temporal da popularidade.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -64,48 +98,30 @@
     <div class="col-lg-6 mb-2">
         <div class="card">
             <div class="card-body">
-                <div class="row col-sm-12 col-lg-8">
-                    <div class="col-lg-12 d-flex justify-content-between">
-                        <div class="col-lg-12">
-                            <h4>Popularidade média por década</h4>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h4>Popularidade média por década</h4>
+                            </div>
+                            <div class="col-lg-12 graph-canvas">
+                                <canvas class="ms-1 me-1" id="chart-decade-popularity"></canvas>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-12 graph-canvas">
-                        <canvas class="ms-1 me-1" id="chart-decade-popularity"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-9 mb-2">
-        <div class="card">
-            <div class="card-body">
-                <div class="row col-sm-12 col-lg-9">
-                    <div class="col-lg-12 d-flex justify-content-between">
-                        <div class="col-lg-12">
-                            <h4>Correlação entre Popularidade e Características Musicais</h4>
+                    <div class="col-lg-4 d-flex align-items-center">
+                        <div>
+                            <h5>Descrição do Gráfico</h5>
+                            <p class="text-small">
+                                Este gráfico apresenta a popularidade média ao longo das décadas, permitindo uma análise 
+                                de tendências de longo prazo. Ele ajuda a compreender como a relevância de determinadas 
+                                entidades ou eventos evoluiu ao longo do tempo.
+                            </p>
+                            <p class="text-small">
+                                Use este gráfico para identificar décadas de maior destaque e avaliar mudanças de 
+                                comportamento ou preferências em diferentes períodos históricos.
+                            </p>
                         </div>
-                    </div>
-                    <div class="col-lg-12 graph-canvas">
-                        <canvas class="ms-1 me-1" id="popularityChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 mb-2">
-        <div class="card">
-            <div class="card-body">
-                <div class="row col-sm-12 col-lg-12">
-                    <div class="col-lg-12 d-flex justify-content-between">
-                        <div class="col-lg-12">
-                            <h4>Coeficientes da Regressão Linear</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 graph-canvas">
-                        <ul id="regressionCoefficients"></ul>
                     </div>
                 </div>
             </div>
@@ -117,18 +133,77 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="col-sm-12 col-lg-8">
+                    <div class="col-lg-9">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h4>Correlação entre Popularidade e Características Musicais</h4>
+                            </div>
+                            <div class="col-lg-12 graph-canvas">
+                                <canvas class="ms-1 me-1" id="popularityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 align-items-center">
+                        <div>
+                            <h5>Descrição do Gráfico</h5>
+                            <p>
+                                Este gráfico explora a relação entre a popularidade de músicas e suas características musicais, 
+                                como ritmo, energia, dança e outros aspectos técnicos. Ele permite identificar padrões que tornam 
+                                músicas mais atraentes ao público.
+                            </p>
+                            <p>
+                                Utilize este gráfico para avaliar quais características influenciam mais diretamente na popularidade 
+                                de diferentes faixas, ajudando na análise e na criação de estratégias musicais.
+                            </p>
+                            <p>
+                                Selecionando as variáveis no topo do gráfico, é possível visualizá-las individualmente.
+                            </p>
+                        </div>
+                        <div class="row col-sm-12 col-lg-12">
                             <div class="col-lg-12 d-flex justify-content-between">
                                 <div class="col-lg-12">
-                                    <h4>Variação da energia e dançabilidade</h4>
+                                    <h4>Coeficientes da Regressão Linear</h4>
                                 </div>
+                            </div>
+                            <div class="col-lg-12 graph-canvas">
+                                <ul id="regressionCoefficients"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h4>Variação da energia e dançabilidade</h4>
                             </div>
                             <div class="col-lg-12 graph-canvas">
                                 <canvas class="ms-1 me-1" id="chart-energy-danceability"></canvas>
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-4 d-flex align-items-center">
+                        <div>
+                            <h5>Descrição do Gráfico</h5>
+                            <p>
+                                Este gráfico analisa a variação de energia e dançabilidade em músicas, 
+                                mostrando como essas características mudam ao longo do tempo ou entre diferentes faixas. 
+                                Ele é útil para compreender o impacto desses aspectos na experiência auditiva.
+                            </p>
+                            <p>
+                                Use este gráfico para identificar padrões em estilos musicais, como músicas mais enérgicas 
+                                ou dançantes, e compreender a relação entre esses atributos e a recepção do público.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,8 +212,8 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="col-sm-12 col-lg-9">
+                    <div class="col-lg-9">
+                        <div class="row">
                             <div class="col-lg-12 d-flex justify-content-between">
                                 <div class="col-lg-8">
                                     <h4>Média de energia por álbum</h4>
@@ -161,32 +236,17 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12 mb-2">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="col-lg-12 d-flex justify-content-between">
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6 graph-canvas">
-                                <div class="col-lg-12">
-                                    <h4>Distribuição de assinaturas de tempo</h4>
-                                </div>
-                                <canvas id="timeSignaturesChart"></canvas>
-                            </div>
-                            <div class="col-lg-6 graph-canvas">
-                                <div class="col-lg-12">
-                                    <h4>Distribuição de assinaturas de tempo por popularidade</h4>
-                                </div>
-                                <canvas id="popularityComparisonChart"></canvas>
-                            </div>
+                    <div class="col-lg-3 d-flex align-items-center">
+                        <div>
+                            <h5>Descrição do Gráfico</h5>
+                            <p>
+                                Este gráfico apresenta a média de energia das faixas em cada álbum, destacando quais 
+                                álbuns possuem um estilo mais enérgico. Ele auxilia na análise de padrões de energia em diferentes trabalhos musicais.
+                            </p>
+                            <p>
+                                A seleção de quantidade permite limitar a visualização para focar nos álbuns mais ou menos energéticos, 
+                                dependendo da análise desejada.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -199,21 +259,79 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="col-lg-12 d-flex justify-content-between">
+                    <div class="col-lg-6">
+                        <div class="graph-canvas">
+                            <div class="col-lg-12">
+                                <h4>Distribuição de assinaturas de tempo</h4>
+                            </div>
+                            <canvas id="timeSignaturesChart"></canvas>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-3 graph-canvas">
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="graph-canvas">
+                            <div class="col-lg-12">
+                                <h4>Distribuição de assinaturas de tempo por popularidade</h4>
+                            </div>
+                            <canvas id="popularityComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-12 d-flex align-items-center">
+                        <div>
+                            <h5>Descrição dos Gráficos</h5>
+                            <p>
+                                O primeiro gráfico, "Distribuição de assinaturas de tempo", exibe a frequência de diferentes assinaturas de tempo nas faixas, destacando padrões rítmicos mais comuns, como 4/4, 3/4, entre outros.
+                            </p>
+                            <p>
+                                O segundo gráfico, "Distribuição de assinaturas de tempo por popularidade", compara a popularidade das músicas com suas assinaturas de tempo, permitindo identificar quais métricas rítmicas estão associadas a maior sucesso.
+                            </p>
+                            <p>
+                                Ambos os gráficos fornecem uma visão detalhada das preferências rítmicas e de como a estrutura de tempo influencia o sucesso das músicas em diferentes contextos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8 d-flex">
+                        <div class="col-lg-3">
+                            <div class="graph-canvas">
                                 <div class="col-lg-12">
                                     <h4>Distribuição por tonalidades</h4>
                                 </div>
                                 <canvas id="modesChart"></canvas>
                             </div>
-                            <div class="col-lg-6 graph-canvas">
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="graph-canvas">
                                 <div class="col-lg-12">
                                     <h4>Distribuição por "notas"</h4>
                                 </div>
                                 <canvas id="keysChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="col-lg-12 d-flex align-items-center">
+                            <div>
+                                <h5>Descrição dos Gráficos</h5>
+                                <p>
+                                    O primeiro gráfico, "Distribuição por tonalidades", exibe a frequência de tonalidades musicais utilizadas nas faixas. Ele ajuda a entender como as tonalidades influenciam a harmonia e a tonalidade das músicas.
+                                </p>
+                                <p>
+                                    O segundo gráfico, "Distribuição por 'notas'", mostra a frequência das notas utilizadas nas faixas. Isso permite observar as escolhas de notas e como elas impactam a estrutura melódica.
+                                </p>
+                                <p>
+                                    Ambos os gráficos oferecem uma visão interessante sobre como as tonalidades e notas são distribuídas nas músicas, revelando padrões que podem estar relacionados a estilos musicais específicos ou influências culturais.
+                                </p>
                             </div>
                         </div>
                     </div>
