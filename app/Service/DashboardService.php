@@ -3,8 +3,7 @@
 namespace App\Service;
 
 use App\Models\Music;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
@@ -31,5 +30,25 @@ class DashboardService
         return response()->json($response);
     }
 
+    public function getPopularityByYear()
+    {
+        $popularityByYear = Music::select('year', DB::raw('AVG(popularity) as avg_popularity'))
+                            ->groupBy('year')
+                            ->orderBy('year')
+                            ->get();
+
+
+        return response()->json($popularityByYear);
+    }
+
+    public function getPopularityByDecade()
+    {
+        $popularityByDecade = Music::select(DB::raw('FLOOR(year / 10) * 10 as decade'), DB::raw('AVG(popularity) as avg_popularity'))
+            ->groupBy(DB::raw('FLOOR(year / 10) * 10'))
+            ->orderBy('decade')
+            ->get();
+
+        return response()->json($popularityByDecade);
+    }
 
 }

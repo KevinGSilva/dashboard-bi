@@ -43,15 +43,35 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6">
+</div>
+<div class="row">
+    <div class="col-lg-6 mb-2">
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h4>Artistas/bandas são as mais populares</h4>
+                <div class="row col-sm-12 col-lg-8">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div class="col-lg-12">
+                            <h4>Artistas/bandas são as mais populares</h4>
+                        </div>
                     </div>
                     <div class="col-lg-12 graph-canvas">
-                        <canvas class="ms-1 me-1" id="chart-artists-popularity-2"></canvas>
+                        <canvas class="ms-1 me-1" id="chart-year-popularity"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="row col-sm-12 col-lg-8">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div class="col-lg-12">
+                            <h4>Artistas/bandas são as mais populares</h4>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 graph-canvas">
+                        <canvas class="ms-1 me-1" id="chart-decade-popularity"></canvas>
                     </div>
                 </div>
             </div>
@@ -64,10 +84,13 @@
 @parent
 <script type="text/javascript">
 var chartArtistsPopularity = null;
-var chartArtistsPopularity2 = null;
+var chartYearPopularity = null;
+var chartDecadePopularity = null;
 
 jQuery(document).ready(function ($) {
     getArtistPopularityData();
+    getYearPopularityData();
+    getDecadePopularityData();
 
     function getArtistPopularityData() {
 		$('.spinner-background').removeClass('d-none');
@@ -100,7 +123,7 @@ jQuery(document).ready(function ($) {
         adjustChartHeight(chart);
 
         if (chartArtistsPopularity) {
-            chartArtistsPopularity.destroy(); // Remove o gráfico anterior, se existir
+            chartArtistsPopularity.destroy();
         }
 
         chartArtistsPopularity = new Chart(chart, {
@@ -153,6 +176,154 @@ jQuery(document).ready(function ($) {
 		
 		return formData
 	}
+
+    function getYearPopularityData() {
+        $('.spinner-background').removeClass('d-none');
+        var formData = ''
+        
+        $.ajax({
+            url: '{{ url("api/year-popularity") }}',          	
+            type: "GET",
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                createChartYearPopularity(response);
+
+                $('.spinner-background').addClass('d-none');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+
+                $('.spinner-background').addClass('d-none');
+            }
+        });
+    }
+
+    function createChartYearPopularity(data) {
+        let chart = document.getElementById("chart-year-popularity");
+
+        adjustChartHeight(chart);
+
+        if (chartYearPopularity) {
+            chartYearPopularity.destroy();
+        }
+
+        const years = data.map(item => item.year);
+        const popularity = data.map(item => item.avg_popularity);
+
+        chartYearPopularity = new Chart(chart, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Popularidade Média',
+                    data: popularity,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Popularidade',
+                        },
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Ano',
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    function getDecadePopularityData() {
+        $('.spinner-background').removeClass('d-none');
+        var formData = ''
+        
+        $.ajax({
+            url: '{{ url("api/decade-popularity") }}',          	
+            type: "GET",
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                createChartDecadePopularity(response);
+
+                $('.spinner-background').addClass('d-none');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+
+                $('.spinner-background').addClass('d-none');
+            }
+        });
+    }
+
+    function createChartDecadePopularity(data) {
+        let chart = document.getElementById("chart-decade-popularity");
+
+        adjustChartHeight(chart);
+
+        if (chartDecadePopularity) {
+            chartDecadePopularity.destroy();
+        }
+
+        const decades = data.map(item => item.decade);
+        const popularity = data.map(item => item.avg_popularity);
+
+        chartDecadePopularity = new Chart(chart, {
+            type: 'bar',
+            data: {
+                labels: decades,
+                datasets: [{
+                    label: 'Popularidade Média',
+                    data: popularity,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Popularidade',
+                        },
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Decada',
+                        },
+                    },
+                },
+            },
+        });
+    }
 
     $('#filter-popularity-entity, #filter-popularity-limit').on('change', function() {
         getArtistPopularityData();

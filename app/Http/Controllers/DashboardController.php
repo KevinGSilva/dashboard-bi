@@ -29,5 +29,18 @@ class DashboardController extends Controller
         return $artists;
     }
 
+    public function getPopularityByYear()
+    {
+        $popularity = $this->dashboardService->getPopularityByYear();
+
+        return $popularity;
+    }
+
+    public function getPopularityByDecade()
+    {
+        $popularity = $this->dashboardService->getPopularityByDecade();
+
+        return $popularity;
+    }
 
 }
