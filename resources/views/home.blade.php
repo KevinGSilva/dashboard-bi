@@ -12,10 +12,10 @@
             <div class="card-body">
                 <div class="row col-sm-12 col-lg-8">
                     <div class="col-lg-12 d-flex justify-content-between">
-                        <h4>Artistas/bandas são as mais populares</h4>
+                        <h4>Entidades mais populares</h4>
                         <div class="filter col-lg-4 d-flex justify-content-between">
                             <div class="col-lg-5">
-                                <label for="entity">Visualização</label>
+                                <label for="entity">Entidade</label>
                                 <select class="form-select select-popularity" id="filter-popularity-entity" name="entity">
                                     @foreach (getEntity() as $key => $item)
                                         <option value="{{ $key }}" {{ $key == 1 ? 'selected' : '' }}>{{ getEntityTranslated($key) }}</option>
@@ -51,7 +51,7 @@
                 <div class="row col-sm-12 col-lg-8">
                     <div class="col-lg-12 d-flex justify-content-between">
                         <div class="col-lg-12">
-                            <h4>Artistas/bandas são as mais populares</h4>
+                            <h4>Popularidade média por ano</h4>
                         </div>
                     </div>
                     <div class="col-lg-12 graph-canvas">
@@ -67,7 +67,7 @@
                 <div class="row col-sm-12 col-lg-8">
                     <div class="col-lg-12 d-flex justify-content-between">
                         <div class="col-lg-12">
-                            <h4>Artistas/bandas são as mais populares</h4>
+                            <h4>Popularidade média por década</h4>
                         </div>
                     </div>
                     <div class="col-lg-12 graph-canvas">
@@ -253,7 +253,7 @@ jQuery(document).ready(function ($) {
                     x: {
                         title: {
                             display: true,
-                            text: 'Artistas/Bandas',
+                            text: 'Entidade',
                         },
                     },
                 },
