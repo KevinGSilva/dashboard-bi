@@ -112,6 +112,52 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-12 mb-2">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="col-lg-6">
+                        <div class="col-sm-12 col-lg-8">
+                            <div class="col-lg-12 d-flex justify-content-between">
+                                <div class="col-lg-12">
+                                    <h4>Variação da energia e dançabilidade</h4>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 graph-canvas">
+                                <canvas class="ms-1 me-1" id="chart-energy-danceability"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="col-sm-12 col-lg-9">
+                            <div class="col-lg-12 d-flex justify-content-between">
+                                <div class="col-lg-8">
+                                    <h4>Média de energia por álbum</h4>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="limit">Quantidade</label>
+                                    <select class="form-select select-popularity" id="filter-energy-limit" name="limit">
+                                        <option value="">Todos</option>
+                                        <option value="10" selected>Top 10</option>
+                                        <option value="50">Top 50</option>
+                                        <option value="100">Top 100</option>
+                                        <option value="200">Top 200</option>
+                                        <option value="400">Top 400</option>
+                                        <option value="800">Top 800</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 graph-canvas">
+                                <canvas class="ms-1 me-1" id="chart-album-energy"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -121,12 +167,15 @@ var chartArtistsPopularity = null;
 var chartYearPopularity = null;
 var chartDecadePopularity = null;
 var chartCorrelationPopularity = null;
+var chartDanceabilityEnergy = null;
+var chartAlbumEnergy = null;
 
 jQuery(document).ready(function ($) {
     getArtistPopularityData();
     getYearPopularityData();
     getDecadePopularityData();
     getCorrelationPopularityData();
+    getDanceabilityEnergyData();
 
     function getArtistPopularityData() {
 		$('.spinner-background').removeClass('d-none');
@@ -482,9 +531,159 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    function getDanceabilityEnergyData() {
+        $('.spinner-background').removeClass('d-none');
+
+        $.ajax({
+            url: '{{ url("api/music-stats") }}',          	
+            type: "POST",
+            data: getEnergyFormData(),
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                createChartDanceabilityEnergy(response);
+
+                $('.spinner-background').addClass('d-none');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+
+                $('.spinner-background').addClass('d-none');
+            }
+        });
+    }
+
+    function createChartDanceabilityEnergy(response) {
+        let chart = document.getElementById("chart-energy-danceability");
+        let chartAlbum = document.getElementById("chart-album-energy");
+
+        adjustChartHeight(chart);
+        adjustChartHeight(chartAlbum);
+
+        if (chartDanceabilityEnergy) {
+            chartDanceabilityEnergy.destroy();
+        }
+
+        if (chartAlbumEnergy) {
+            chartAlbumEnergy.destroy();
+        }
+        
+        let years = [];
+        let avgEnergy = [];
+        let avgDanceability = [];
+        
+        response.yearStats.forEach(function(data) {
+            years.push(data.year);
+            avgEnergy.push(data.avg_energy);
+            avgDanceability.push(data.avg_danceability);
+        });
+        
+        let albums = [];
+        let avgAlbumEnergy = [];
+        
+        response.albumStats.forEach(function(data) {
+            albums.push(data.album);
+            avgAlbumEnergy.push(data.avg_energy);
+        });
+
+
+        chartDanceabilityEnergy = new Chart(chart, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Média de Energia (Ano)',
+                    data: avgEnergy,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true
+                },
+                {
+                    label: 'Média de Dançabilidade (Ano)',
+                    data: avgDanceability,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Valor Médio'
+                        }
+                    }
+                }
+            }
+        });
+
+        chartAlbumEnergy = new Chart(chartAlbum, {
+            type: 'bar',
+            data: {
+                labels: albums,
+                datasets: [{
+                    label: 'Média de Energia por Álbum',
+                    data: avgAlbumEnergy,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Energia Média'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function getEnergyFormData () {        
+		const formData = new FormData()
+
+		formData.append('limit', $('#filter-energy-limit').val())
+		
+		return formData
+	}
+
     $('#filter-popularity-entity, #filter-popularity-limit').on('change', function() {
         getArtistPopularityData();
     }).trigger('change');
+
+    $('#filter-energy-limit').on('change', function() {
+        getDanceabilityEnergyData();
+
+        $('html, body').animate({
+            scrollTop: $(document).height()
+        }, 100);
+
+    });
 
     function adjustChartHeight(chart) {
         const canvas = chart;

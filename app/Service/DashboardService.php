@@ -92,4 +92,28 @@ class DashboardService
             'musics' => $musics
         ]);
     }
+
+    public function getMusicStats($limit = 10)
+    {
+        $metalClassicalMusicByYear = Music::query()
+            ->selectRaw('year, AVG(energy) as avg_energy, AVG(danceability) as avg_danceability')
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get();
+            
+        $metalClassicalMusicByAlbum = Music::query()
+            ->selectRaw('album, AVG(energy) as avg_energy')
+            ->groupBy('album')
+            ->orderBy('avg_energy', 'desc')
+            ->get();
+
+        if ($limit) {
+            $metalClassicalMusicByAlbum = $metalClassicalMusicByAlbum->take($limit);
+        }
+
+        return response()->json([
+            'yearStats' => $metalClassicalMusicByYear,
+            'albumStats' => $metalClassicalMusicByAlbum,
+        ]);
+    }
 }

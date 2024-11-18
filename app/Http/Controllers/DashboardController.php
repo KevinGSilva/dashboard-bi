@@ -50,4 +50,11 @@ class DashboardController extends Controller
         return $correlationData;
     }
 
+    public function getMusicStats(Request $request)
+    {
+        $musicStats = $this->dashboardService->getMusicStats($request['limit']);
+
+        return $musicStats;
+    }
+
 }
