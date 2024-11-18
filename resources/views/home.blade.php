@@ -112,12 +112,12 @@
                     <div class="col-lg-4 d-flex align-items-center">
                         <div>
                             <h5>Descrição do Gráfico</h5>
-                            <p class="text-small">
+                            <p class="mb-0">
                                 Este gráfico apresenta a popularidade média ao longo das décadas, permitindo uma análise 
                                 de tendências de longo prazo. Ele ajuda a compreender como a relevância de determinadas 
                                 entidades ou eventos evoluiu ao longo do tempo.
                             </p>
-                            <p class="text-small">
+                            <p class="mb-0">
                                 Use este gráfico para identificar décadas de maior destaque e avaliar mudanças de 
                                 comportamento ou preferências em diferentes períodos históricos.
                             </p>
@@ -1010,11 +1010,6 @@ jQuery(document).ready(function ($) {
 
     $('#filter-energy-limit').on('change', function() {
         getDanceabilityEnergyData();
-
-        $('html, body').animate({
-            scrollTop: $(document).height()
-        }, 100);
-
     });
 
     function adjustChartHeight(chart) {
